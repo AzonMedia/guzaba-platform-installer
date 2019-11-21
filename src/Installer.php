@@ -86,11 +86,25 @@ class Installer extends LibraryInstaller
         } else {
             `mkdir $composer_json_dir/app`;
             `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
-            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/certificates`;
+            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/app/certificates`;
+            `cp -r $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+            `cp -r $guzaba_platform_dir/app/logs $composer_json_dir/app/logs`;
+            `cp -r $guzaba_platform_dir/app/public $composer_json_dir/app/public`;
+            `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
+            `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
             `mkdir $composer_json_dir/app/public_src`;
             `mkdir $composer_json_dir/app/public_src/build`;
             //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
         }
+        $manifest_json_file = $composer_json_dir.'/manifest.json';
+        if (file_exists($manifest_json_file)) {
+            //throw
+        }
+        $manifest_content = [];
+        $manifest_content['name'] = 'GuzabaPlatform';
+        $manifest_content['url'] = 'https://platform.guzaba.org/';
+        $manifest_content['components'] = [];
+        file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
         print 'GGGGGGGGGGGG'.PHP_EOL;
         $this->install_guzaba_platform_component($Repo, $Package);
 
