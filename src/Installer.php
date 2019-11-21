@@ -106,10 +106,10 @@ class Installer extends LibraryInstaller
         if (file_exists($manifest_json_file)) {
             throw new \RuntimeException(sprintf('The file %s already exists.', $manifest_json_file));
         }
-        $manifest_content = [];
-        $manifest_content['name'] = 'GuzabaPlatform';
-        $manifest_content['url'] = 'https://platform.guzaba.org/';
-        $manifest_content['components'] = [];
+        $manifest_content = new \stdClass();
+        $manifest_content->name = 'GuzabaPlatform';
+        $manifest_content->url = 'https://platform.guzaba.org/';
+        $manifest_content->components = [];
         file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
 
         $this->install_guzaba_platform_component($Repo, $Package);
@@ -160,16 +160,16 @@ class Installer extends LibraryInstaller
         } else {
             $manifest_content = [];
         }
-        if (!array_key_exists('components',$manifest_content)) {
-            $manifest_content['components'] = [];
+        if (isset($manifest_content->components)) {
+            $manifest_content->components = [];
         }
-        $manifest_content['components'][] = [
-            'name'              => $package_name,
-            'namespace'         => $namespace,
-            'root_dir'          => $plugin_dir,
-            'src'               => $plugin_dir.'/app/src',
-            'public_src_dir'    => $plugin_dir.'/app/public_src',
-        ];
+        $component = new \stdClass();
+        $component->name = $package_name;
+        $component->namespace = $namespace;
+        $component->root_dir = $plugin_dir,
+        $component->src_dir = $plugin_dir.'/app/src';
+        $component->public_src_dir = $plugin_dir.'/app/public_src';
+        $manifest_content->components[] = $component;
         file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
 
         //update the webpack.config.js
