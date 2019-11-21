@@ -1,6 +1,6 @@
 <?php
 
-namespace GuzabaPlatform\Installer\Plugin;
+namespace GuzabaPlatform\Installer;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;

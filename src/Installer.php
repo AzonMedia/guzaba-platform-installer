@@ -1,6 +1,6 @@
 <?php
 
-namespace GuzabaPlatform\Installer\Installer;
+namespace GuzabaPlatform\Installer;
 
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
