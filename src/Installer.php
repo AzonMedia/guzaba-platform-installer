@@ -78,11 +78,16 @@ class Installer extends LibraryInstaller
      */
     private function install_guzaba_platform(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
+
+        print sprintf('GuzabaPlatformInstaller initializing GuzabaPlatofrm').PHP_EOL;
+
         $installer_dir = __DIR__;
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
-        $guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
-        if (file_exists($composer_json_dir.'/bin')) {
+        //$guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
+        $guzaba_platform_dir = $this->getInstallPath($Package);
+        if (file_exists($composer_json_dir.'/app')) {
             //error
+            throw new \RuntimeException(sprintf('The directory %s already exists.', $composer_json_dir.'/app'));
         } else {
             `mkdir $composer_json_dir/app`;
             `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
@@ -92,20 +97,21 @@ class Installer extends LibraryInstaller
             `cp -r $guzaba_platform_dir/app/public $composer_json_dir/app/public`;
             `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
             `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
-            `mkdir $composer_json_dir/app/public_src`;
-            `mkdir $composer_json_dir/app/public_src/build`;
+            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
+            //`mkdir $composer_json_dir/app/public_src`;
+            //`mkdir $composer_json_dir/app/public_src/build`;
             //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
         }
         $manifest_json_file = $composer_json_dir.'/manifest.json';
         if (file_exists($manifest_json_file)) {
-            //throw
+            throw new \RuntimeException(sprintf('The file %s already exists.', $manifest_json_file));
         }
         $manifest_content = [];
         $manifest_content['name'] = 'GuzabaPlatform';
         $manifest_content['url'] = 'https://platform.guzaba.org/';
         $manifest_content['components'] = [];
         file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
-        print 'GGGGGGGGGGGG'.PHP_EOL;
+
         $this->install_guzaba_platform_component($Repo, $Package);
 
     }
@@ -113,19 +119,23 @@ class Installer extends LibraryInstaller
     private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
 
-        print 'P1 : '.$this->getInstallPath($Package).PHP_EOL;
-        print 'P2 : '.$this->getPackageBasePath($Package).PHP_EOL;
-
+        //print 'P1 : '.$this->getInstallPath($Package).PHP_EOL;// /home/local/PROJECTS/guzaba2-platform/Z6/vendor/guzaba-platform/guzaba-platform
+        //print 'P2 : '.$this->getPackageBasePath($Package).PHP_EOL;// /home/local/PROJECTS/guzaba2-platform/Z6/vendor/guzaba-platform/guzaba-platform
+        $plugin_dir = $this->getInstallPath($Package);
 
         $package_name = $Package->getName();
-        print 'GuzabaPlatformInstaller running for '.$package_name.PHP_EOL;
+        print sprintf('GuzabaPlatformInstaller running for component $s', $package_name).PHP_EOL;
 
         //$target_dir = $Package->getTargetDir();
         $autoload = $Package->getAutoload();
         if (!isset($autoload['psr-4'])) {
-            //error
+            throw new \RuntimeException(sprintf('The component %s does not define a PSR-4 autoloader.', $package_name));
+        }
+        if (count($autoload['psr-4'])===0) {
+            throw new \RuntimeException(sprintf('The component %s does not define a PSR-4 autoloader.', $package_name));
         }
         //if more than one ns - error too
+        //no - multiple namespaces will be supported
 
         $namespace = array_key_first($autoload['psr-4']);
 
@@ -156,11 +166,13 @@ class Installer extends LibraryInstaller
         $manifest_content['components'][] = [
             'name'              => $package_name,
             'namespace'         => $namespace,
-//            'root_dir'          => $guzaba_platform_dir,
-//            'src'               => $guzaba_platform_dir.'/app/src',
-//            'public_src_dir'    => $guzaba_platform_dir.'/app/public_src',
+            'root_dir'          => $plugin_dir,
+            'src'               => $plugin_dir.'/app/src',
+            'public_src_dir'    => $plugin_dir.'/app/public_src',
         ];
         file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
+
+        //update the webpack.config.js
     }
 
     /**
