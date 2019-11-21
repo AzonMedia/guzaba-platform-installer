@@ -166,7 +166,7 @@ class Installer extends LibraryInstaller
         $component = new \stdClass();
         $component->name = $package_name;
         $component->namespace = $namespace;
-        $component->root_dir = $plugin_dir,
+        $component->root_dir = $plugin_dir;
         $component->src_dir = $plugin_dir.'/app/src';
         $component->public_src_dir = $plugin_dir.'/app/public_src';
         $manifest_content->components[] = $component;
