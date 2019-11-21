@@ -1,0 +1,27 @@
+{
+    "name": "guzaba-platform/guzaba-platform-installer",
+    "type": "composer-plugin",
+    "description": "GuzabaPlatform installer",
+    "keywords": ["installer"],
+    "homepage": "https://github.com/AzonMedia/guzaba-platform-installer",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Vesko Kenashkov",
+            "email": "kenashkov@azonmedia.com",
+            "homepage": "http://azonmedia.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "composer/composer": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "GuzabaPlatform\\Installer\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "GuzabaPlatform\\Installer\\Plugin"
+    }
+}
