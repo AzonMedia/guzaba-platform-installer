@@ -7,6 +7,11 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 
+/**
+ * Class Plugin
+ * @package GuzabaPlatform\Installer
+ * Hooks a custom installer to Composer
+ */
 class Plugin implements PluginInterface
 {
 

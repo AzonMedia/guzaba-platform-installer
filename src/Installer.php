@@ -11,6 +11,7 @@ use Composer\Repository\InstalledRepositoryInterface;
  * Class Installer
  * @package GuzabaPlatform\Installer
  * @see https://getcomposer.org/doc/articles/custom-installers.md
+ * Custom installer for GuzabaPlatform and GuzabaPlatform Packages
  */
 class Installer extends LibraryInstaller
 {
@@ -70,9 +71,27 @@ class Installer extends LibraryInstaller
         //$vendor_dir = $PackageEvent->getComposer()->getConfig()->get('vendor-dir');
     }
 
+    /**
+     * Performs few additional steps before invoking self::install_guzaba_platform_component()
+     * @param InstalledRepositoryInterface $Repo
+     * @param PackageInterface $Package
+     */
     private function install_guzaba_platform(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
-
+        $installer_dir = __DIR__;
+        $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
+        $guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
+        if (file_exists($composer_json_dir.'/bin')) {
+            //error
+        } else {
+            `mkdir $composer_json_dir/app`;
+            `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
+            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/certificates`;
+            `mkdir $composer_json_dir/app/public_src`;
+            `mkdir $composer_json_dir/app/public_src/build`;
+            //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
+        }
+        print 'GGGGGGGGGGGG'.PHP_EOL;
         $this->install_guzaba_platform_component($Repo, $Package);
 
     }
@@ -80,8 +99,8 @@ class Installer extends LibraryInstaller
     private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
 
-        print 'P1 : '.$this->getInstallPath().PHP_EOL;
-        print 'P2 : '.$this->getPackageBasePath().PHP_EOL;
+        print 'P1 : '.$this->getInstallPath($Package).PHP_EOL;
+        print 'P2 : '.$this->getPackageBasePath($Package).PHP_EOL;
 
 
         $package_name = $Package->getName();
@@ -96,18 +115,21 @@ class Installer extends LibraryInstaller
 
         $namespace = array_key_first($autoload['psr-4']);
 
+//        $installer_dir = __DIR__;
+//        $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
+//        $guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
+//        if (file_exists($composer_json_dir.'/bin')) {
+//            //error
+//        } else {
+//            `mkdir $composer_json_dir/app`;
+//            `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
+//            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/certificates`;
+//            `mkdir $composer_json_dir/app/public_src`;
+//            `mkdir $composer_json_dir/app/public_src/build`;
+//            //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
+//        }
         $installer_dir = __DIR__;
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
-        $guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
-        if (file_exists($composer_json_dir.'/bin')) {
-            //error
-        } else {
-            `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/bin`;
-            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/certificates`;
-            `mkdir $composer_json_dir/public_src`;
-            `mkdir $composer_json_dir/public_src/build`;
-            //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
-        }
         $manifest_json_file = $composer_json_dir.'/manifest.json';
         if (file_exists($manifest_json_file)) {
             $manifest_content = json_decode(file_get_contents($manifest_json_file));
@@ -120,11 +142,11 @@ class Installer extends LibraryInstaller
         $manifest_content['components'][] = [
             'name'              => $package_name,
             'namespace'         => $namespace,
-            'root_dir'          => $guzaba_platform_dir,
-            'src'               => $guzaba_platform_dir.'/app/src',
-            'public_src_dir'    => $guzaba_platform_dir.'/app/public_src',
+//            'root_dir'          => $guzaba_platform_dir,
+//            'src'               => $guzaba_platform_dir.'/app/src',
+//            'public_src_dir'    => $guzaba_platform_dir.'/app/public_src',
         ];
-        file_put_contents($manifest_json_file, json_encode($manifest_content));
+        file_put_contents($manifest_json_file, json_encode($manifest_content, JSON_PRETTY_PRINT));
     }
 
     /**
