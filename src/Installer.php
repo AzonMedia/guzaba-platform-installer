@@ -52,6 +52,13 @@ class Installer extends LibraryInstaller
 //
 //    )
         $package_name = $Package->getName();
+
+        if ($package_name !== self::SUPPORTED_PACKAGE) {
+            return;//do not perform amy installation steps
+        }
+
+        print 'GuzabaPlatformInstaller running for '.$package_name.PHP_EOL;
+
         //$target_dir = $Package->getTargetDir();
         $autoload = $Package->getAutoload();
         if (!isset($autoload['psr-4'])) {
@@ -59,13 +66,7 @@ class Installer extends LibraryInstaller
         }
         //if more than one ns - error too
 
-        $namespace = $autoload['psr-4'][0];
-
-        if ($package_name !== self::SUPPORTED_PACKAGE) {
-            return;//do not perform amy installation steps
-        }
-
-        print 'GuzabaPlatformInstaller running for '.$package_name.PHP_EOL;
+        $namespace = array_key_first($autoload['psr-4']);
 
         $installer_dir = __DIR__;
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
@@ -113,7 +114,7 @@ class Installer extends LibraryInstaller
     public function supports($package_type)
     {
         //return 'phpdocumentor-template' === $packageType;
-        print 'SUPPORTS: '.$package_type.PHP_EOL;
+        //print 'SUPPORTS: '.$package_type.PHP_EOL;
         return self::SUPPORTED_TYPE === $package_type;
     }
 }
