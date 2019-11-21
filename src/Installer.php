@@ -73,6 +73,17 @@ class Installer extends LibraryInstaller
     private function install_guzaba_platform(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
 
+        $this->install_guzaba_platform_component($Repo, $Package);
+
+    }
+
+    private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
+    {
+
+        print 'P1 : '.$this->getInstallPath().PHP_EOL;
+        print 'P2 : '.$this->getPackageBasePath().PHP_EOL;
+
+
         $package_name = $Package->getName();
         print 'GuzabaPlatformInstaller running for '.$package_name.PHP_EOL;
 
@@ -114,11 +125,6 @@ class Installer extends LibraryInstaller
             'public_src_dir'    => $guzaba_platform_dir.'/app/public_src',
         ];
         file_put_contents($manifest_json_file, json_encode($manifest_content));
-    }
-
-    private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
-    {
-
     }
 
     /**
