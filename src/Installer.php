@@ -65,6 +65,8 @@ class Installer extends LibraryInstaller
             return;//do not perform amy installation steps
         }
 
+        print 'GuzabaPlatformInstaller running for '.$package_name.PHP_EOL;
+
         $installer_dir = __DIR__;
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
         $guzaba_platform_dir = realpath($installer_dir.'/../../guzaba-platform/');
