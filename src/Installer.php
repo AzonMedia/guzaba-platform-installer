@@ -115,7 +115,7 @@ class Installer extends LibraryInstaller
         } else {
             $manifest_content = [];
         }
-        if (isset($manifest_content->components)) {
+        if (!isset($manifest_content->components)) {
             $manifest_content->components = [];
         }
         $component = new \stdClass();
@@ -125,6 +125,7 @@ class Installer extends LibraryInstaller
         $component->src_dir = $plugin_dir.'/app/src';
         $component->public_src_dir = $plugin_dir.'/app/public_src';
         $manifest_content->components[] = $component;
+
         file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
 
         //update the webpack.config.js
