@@ -13,12 +13,12 @@ class Plugin implements PluginInterface
     /**
      * Apply plugin modifications to Composer
      *
-     * @param Composer $composer
-     * @param IOInterface $io
+     * @param Composer $Composer
+     * @param IOInterface $Io
      */
-    public function activate(Composer $Compoer, IOInterface $Io)
+    public function activate(Composer $Composer, IOInterface $Io)
     {
-        $Installer = new Installer($Io, $Compoer);
-        $Compoer->getInstallationManager()->addInstaller($Installer);
+        $Installer = new Installer($Io, $Composer);
+        $Composer->getInstallationManager()->addInstaller($Installer);
     }
 }
