@@ -106,17 +106,17 @@ class Installer extends LibraryInstaller
             //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
         }
         $manifest_json_file = $composer_json_dir.'/manifest.json';
-        if (file_exists($manifest_json_file)) {
-            throw new \RuntimeException(sprintf('The file %s already exists.', $manifest_json_file));
-        }
-        $manifest_content = new \stdClass();
-        $manifest_content->name = 'GuzabaPlatform';
-        $manifest_content->url = 'https://platform.guzaba.org/';
-        $manifest_content->version = $Package->getVersion();
-        $manifest_content->installed_time = time();
-        $manifest_content->components = [];
-        file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
+        if (!file_exists($manifest_json_file)) {
+            //throw new \RuntimeException(sprintf('The file %s already exists.', $manifest_json_file));
 
+            $manifest_content = new \stdClass();
+            $manifest_content->name = 'GuzabaPlatform';
+            $manifest_content->url = 'https://platform.guzaba.org/';
+            $manifest_content->version = $Package->getVersion();
+            $manifest_content->installed_time = time();
+            $manifest_content->components = [];
+            file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
+        }
         $this->install_guzaba_platform_component($Repo, $Package);
 
     }
@@ -225,7 +225,7 @@ class Installer extends LibraryInstaller
 const path = require('path')
 exports.aliases = {
     vue$: 'vue/dist/vue.esm.js',
-    "@": path.resolve(__dirname, 'src'),
+    "@": path.resolve(__dirname, '../src'),
 }
 WEBPACK;
 
@@ -236,6 +236,7 @@ WEBPACK;
         }
         $aliases = $matches[1];
         //GuzabaPlatform\Tags
+        $namespace = str_replace('\\','.', $namespace);
         $aliases .= "\"@$namespace\": path.resolve(__dirname, '$plugin_public_src_dir'),".PHP_EOL;
         $aliases_replacement_section = 'exports.aliases = {'.$aliases.'}';
         $webpack_content = preg_replace('/exports.aliases = {(.*)}/iUms', $aliases_replacement_section, $webpack_content);
