@@ -97,7 +97,7 @@ class Installer extends LibraryInstaller
             `cp -r $guzaba_platform_dir/app/public $composer_json_dir/app/public`;
             `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
             `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
-            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;//will be no longer copied...
+            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
             `mkdir $composer_json_dir/app/public_src`;
             `mkdir $composer_json_dir/app/public_src/components_config`;
             //in app/public_src there will be custom namespaces for the project
