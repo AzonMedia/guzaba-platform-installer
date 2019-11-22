@@ -79,7 +79,7 @@ class Installer extends LibraryInstaller
      */
     private function install_guzaba_platform(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
-
+/*
         print sprintf('GuzabaPlatformInstaller: initializing GuzabaPlatofrm').PHP_EOL;
 
         //TODO - move this in a PostInstall class in GuzabaPlatform... this plugin will handle only component installations
@@ -116,7 +116,7 @@ class Installer extends LibraryInstaller
         $manifest_content->installed_time = time();
         $manifest_content->components = [];
         file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
-
+*/
         $this->install_guzaba_platform_component($Repo, $Package);
 
     }
@@ -143,10 +143,10 @@ class Installer extends LibraryInstaller
 
         $namespace = array_key_first($autoload['psr-4']);
         $plugin_src_dir = realpath($plugin_dir.'/'.$autoload['psr-4'][$namespace]);
-        $plugin_public_src_dir = realpath($plugin_src_dir.'/../public_src');
         if ($namespace[strlen($namespace)-1] === '\\') {
             $namespace = substr($namespace, 0, -1);
         }
+        $plugin_public_src_dir = realpath( str_replace( str_replace('\\','/', $namespace), '', $plugin_src_dir).'/../public_src');
 
         //print $plugin_src_dir;
         //TODO add suppport for multiple namespaces;
