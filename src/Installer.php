@@ -97,9 +97,9 @@ class Installer extends LibraryInstaller
             `cp -r $guzaba_platform_dir/app/public $composer_json_dir/app/public`;
             `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
             `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
-            //`cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;//will be no longer copied...
+            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;//will be no longer copied...
             `mkdir $composer_json_dir/app/public_src`;
-            `mkdir $composer_json_dir/app/public_src/build`;
+            `mkdir $composer_json_dir/app/public_src/components_config`;
             //in app/public_src there will be custom namespaces for the project
             //`mkdir $composer_json_dir/app/public_src`;
             //`mkdir $composer_json_dir/app/public_src/build`;
@@ -216,7 +216,7 @@ class Installer extends LibraryInstaller
     {
         $namespace = $Component->namespace;
         $plugin_public_src_dir = $Component->public_src_dir;
-        $webpack_components_config_js_file =  $composer_json_dir.'/app/public_src/build/webpack.components.config.js';
+        $webpack_components_config_js_file =  $composer_json_dir.'/app/public_src/components_config/webpack.components.config.js';
         if (file_exists($webpack_components_config_js_file)) {
             $webpack_content = file_get_contents($webpack_components_config_js_file);
         } else {
