@@ -79,7 +79,7 @@ class Installer extends LibraryInstaller
      */
     private function install_guzaba_platform(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
-/*
+
         print sprintf('GuzabaPlatformInstaller: initializing GuzabaPlatofrm').PHP_EOL;
 
         //TODO - move this in a PostInstall class in GuzabaPlatform... this plugin will handle only component installations
@@ -116,7 +116,7 @@ class Installer extends LibraryInstaller
         $manifest_content->installed_time = time();
         $manifest_content->components = [];
         file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
-*/
+
         $this->install_guzaba_platform_component($Repo, $Package);
 
     }
