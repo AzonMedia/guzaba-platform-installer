@@ -114,7 +114,7 @@ class Installer extends LibraryInstaller
         //no - multiple namespaces will be supported
 
         $namespace = array_key_first($autoload['psr-4']);
-        if ($namespace[count($namespace)-1] === '\\') {
+        if ($namespace[strlen($namespace)-1] === '\\') {
             $namespace = substr($namespace, 0, -1);
         }
         //TODO add suppport for multiple namespaces;
