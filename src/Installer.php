@@ -87,24 +87,52 @@ class Installer extends LibraryInstaller
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir
         $guzaba_platform_dir = $this->getInstallPath($Package);
         if (file_exists($composer_json_dir.'/app')) {
-            throw new \RuntimeException(sprintf('The directory %s already exists.', $composer_json_dir.'/app'));
+            //throw new \RuntimeException(sprintf('The directory %s already exists.', $composer_json_dir.'/app'));
         } else {
             `mkdir $composer_json_dir/app`;
-            `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
-            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/app/certificates`;
-            `cp -r $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+        }
+
+
+        if (!file_exists($composer_json_dir.'/app/bin')) {
+            //`cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
+            `ln -s $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;//instead of copying make a symlink
+        }
+        if (!file_exists($composer_json_dir.'/app/certificates')) {
+            `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/app/certificates`;//this is a copy as there will be more files added
+            //`ln -s $guzaba_platform_dir/app/certificates $composer_json_dir/app/certificates`;
+        }
+        if (!file_exists($composer_json_dir.'/app/dockerfiles')) {
+            //`cp -r $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+            `ln -s $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+        }
+        if (!file_exists($composer_json_dir.'/app/logs')) {
             `cp -r $guzaba_platform_dir/app/logs $composer_json_dir/app/logs`;
+        } else {
+            //make sure this is a dir
+            if (!is_dir($composer_json_dir.'/app/logs')) {
+                //if it exists and is not a directory this is a critical event - no logs will be written
+                throw new \RuntimeException(sprintf('There already exists a file named %s - this must be a directory.', $composer_json_dir.'/app/logs'));
+            }
+        }
+
+        if (!file_exists($composer_json_dir.'/app/public')) {
             `cp -r $guzaba_platform_dir/app/public $composer_json_dir/app/public`;
+        }
+        if (!file_exists($composer_json_dir.'/app/registry')) {
             `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
-            `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
+        }
+        `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
+        if (!file_exists($composer_json_dir.'/app/public_src')) {
             `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
             `mkdir $composer_json_dir/app/public_src`;
             `mkdir $composer_json_dir/app/public_src/components_config`;
-            //in app/public_src there will be custom namespaces for the project
-            //`mkdir $composer_json_dir/app/public_src`;
-            //`mkdir $composer_json_dir/app/public_src/build`;
-            //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
         }
+
+        //in app/public_src there will be custom namespaces for the project
+        //`mkdir $composer_json_dir/app/public_src`;
+        //`mkdir $composer_json_dir/app/public_src/build`;
+        //`ln -s $guzaba_platform_dir/app/public_src $composer_json_dir/public_src/$namespace`;
+
         $manifest_json_file = $composer_json_dir.'/manifest.json';
         if (!file_exists($manifest_json_file)) {
             //throw new \RuntimeException(sprintf('The file %s already exists.', $manifest_json_file));
