@@ -124,9 +124,12 @@ class Installer extends LibraryInstaller
         `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
         if (!file_exists($composer_json_dir.'/app/public_src')) {
             `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
-            `mkdir $composer_json_dir/app/public_src`;
+            //`mkdir $composer_json_dir/app/public_src`;
+        }
+        if (!file_exists($composer_json_dir.'/app/public_src/components_config')) {
             `mkdir $composer_json_dir/app/public_src/components_config`;
         }
+
 
         //in app/public_src there will be custom namespaces for the project
         //`mkdir $composer_json_dir/app/public_src`;
@@ -189,12 +192,12 @@ class Installer extends LibraryInstaller
         $Component->src_dir = $plugin_src_dir;
         $Component->public_src_dir = $plugin_public_src_dir;
         $Component->installed_time = time();
-
-        $this->execute_post_install_hook($Component, $Repo,$Package);
-
+        
         $this->update_manifest_on_install($composer_json_dir, $Component);
 
         $this->update_webpack_config_on_install($composer_json_dir, $Component);
+
+        $this->execute_post_install_hook($Component, $Repo,$Package);
     }
 
     /**
