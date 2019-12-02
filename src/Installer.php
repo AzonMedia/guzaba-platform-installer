@@ -172,7 +172,9 @@ class Installer extends LibraryInstaller
         //if more than one ns - error too
         //no - multiple namespaces will be supported
 
-        $namespace = array_key_first($autoload['psr-4']);
+        //$namespace = array_key_first($autoload['psr-4']);
+        $namespace = self::array_key_first($autoload['psr-4']);//lets allow lower versions to be used too
+
         $plugin_src_dir = realpath($plugin_dir.'/'.$autoload['psr-4'][$namespace]);
         if ($namespace[strlen($namespace)-1] === '\\') {
             $namespace = substr($namespace, 0, -1);
@@ -305,5 +307,12 @@ WEBPACK;
     private function update_webpack_config_on_update() : void
     {
 
+    }
+
+    private static function array_key_first(array $arr) {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
     }
 }
