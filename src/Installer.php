@@ -416,6 +416,10 @@ WEBPACK;
         file_put_contents($webpack_components_config_js_file, $webpack_content);
     }
 
+    /**
+     * @param PackageInterface $Package
+     * @return \stdClass
+     */
     private function createComponentByPackage(PackageInterface $Package): \stdClass
     {
         $plugin_dir = $this->getInstallPath($Package);
@@ -435,7 +439,7 @@ WEBPACK;
         //if more than one ns - error too
         //no - multiple namespaces will be supported
 
-        $namespace = array_key_first($autoload['psr-4']);
+        $namespace = self::array_key_first($autoload['psr-4']);
         $plugin_src_dir = realpath($plugin_dir.'/'.$autoload['psr-4'][$namespace]);
         if ($namespace[strlen($namespace)-1] === '\\') {
             $namespace = substr($namespace, 0, -1);
@@ -456,13 +460,24 @@ WEBPACK;
         return $Component;
     }
 
+    /**
+     * @return string
+     */
     private function getComposerJsonDir(): string
     {
         $installer_dir = __DIR__;
-        $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir (we know the dir where guzaba-platform-installer is located)
+        //this is the root dir (we know the dir where guzaba-platform-installer is located)
+        $composer_json_dir = realpath($installer_dir.'/../../../../');
         return $composer_json_dir;
     }
 
+    /**
+     * Gets the first key of an array
+     * Polyfill for PHP versions lower that 7.3
+     *
+     * @param array $arr
+     * @return int|string|null
+     */
     private static function array_key_first(array $arr)
     {
         foreach($arr as $key => $unused) {
