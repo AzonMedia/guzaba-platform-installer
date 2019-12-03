@@ -462,4 +462,12 @@ WEBPACK;
         $composer_json_dir = realpath($installer_dir.'/../../../../');//this is the root dir (we know the dir where guzaba-platform-installer is located)
         return $composer_json_dir;
     }
+
+    private static function array_key_first(array $arr)
+    {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
+    }
 }
