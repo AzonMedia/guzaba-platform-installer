@@ -36,12 +36,17 @@ class Installer extends LibraryInstaller
 
         $package_type = $Package->getType();
 
-        if ($package_type === self::PACKAGE_TYPE_PLATFORM) {
-            $this->install_guzaba_platform($Repo, $Package);
-        } elseif ($package_type === self::PACKAGE_TYPE_COMPONENT) {
-            $this->install_guzaba_platform_component($Repo, $Package);
-        } else {
-            throw new \RuntimeException(sprintf('An unsupported package type %s is provided.', $package_type));
+        try {
+            if ($package_type === self::PACKAGE_TYPE_PLATFORM) {
+                $this->install_guzaba_platform($Repo, $Package);
+            } elseif ($package_type === self::PACKAGE_TYPE_COMPONENT) {
+                $this->install_guzaba_platform_component($Repo, $Package);
+            } else {
+                throw new \RuntimeException(sprintf('An unsupported package type %s is provided.', $package_type));
+            }
+        } catch (\Throwable $Exception) {
+            print get_class($Exception).': '.$Exception->getMessage().' in '.$Exception->getFile().'#'.$Exception->getLine();
+            throw $Exception;
         }
 
     }
@@ -54,12 +59,19 @@ class Installer extends LibraryInstaller
     public function uninstall(InstalledRepositoryInterface $Repo, PackageInterface $Package)
     {
         parent::uninstall($Repo, $Package);
-        $package_name = $Package->getName();
-        $composer_json_dir = $this->getComposerJsonDir();
-        $Component = $this->createComponentByPackage($Package);
-        $this->update_manifest_on_uninstall($composer_json_dir, $package_name);
-        $this->update_webpack_config_on_uninstall($composer_json_dir, $Component);
-        $this->execute_post_uninstall_hook($Component, $Repo, $Package);
+
+        try {
+            $package_name = $Package->getName();
+            $composer_json_dir = $this->getComposerJsonDir();
+            $Component = $this->createComponentByPackage($Package);
+            $this->update_manifest_on_uninstall($composer_json_dir, $Component);
+            $this->update_webpack_config_on_uninstall($composer_json_dir, $Component);
+            $this->execute_post_uninstall_hook($Component, $Repo, $Package);
+        } catch (\Throwable $Exception) {
+            print get_class($Exception).': '.$Exception->getMessage().' in '.$Exception->getFile().'#'.$Exception->getLine();
+            throw $Exception;
+        }
+
     }
 
     /**
@@ -70,13 +82,19 @@ class Installer extends LibraryInstaller
      */
     public function update(InstalledRepositoryInterface $Repo, PackageInterface $InitialPackage, PackageInterface $TargetPackage)
     {
-        parent::update($Repo, $InitialPackage, $TargetPackage);
-        $composer_json_dir = $this->getComposerJsonDir();
-        $Component = $this->createComponentByPackage($TargetPackage);
-        $this->update_manifest_on_update($composer_json_dir, $Component);
-        $this->update_webpack_config_on_update($composer_json_dir, $Component);
-        $this->execute_post_update_hook($Component, $Repo, $InitialPackage, $TargetPackage);
-        //update the timestamp in the manifest.json of the last time the package was updated
+        try {
+            parent::update($Repo, $InitialPackage, $TargetPackage);
+            $composer_json_dir = $this->getComposerJsonDir();
+            $Component = $this->createComponentByPackage($TargetPackage);
+            $this->update_manifest_on_update($composer_json_dir, $Component);
+            $this->update_webpack_config_on_update($composer_json_dir, $Component);
+            $this->execute_post_update_hook($Component, $Repo, $InitialPackage, $TargetPackage);
+            //update the timestamp in the manifest.json of the last time the package was updated
+        } catch (\Throwable $Exception) {
+            print get_class($Exception).': '.$Exception->getMessage().' in '.$Exception->getFile().'#'.$Exception->getLine();
+            throw $Exception;
+        }
+
     }
 
     /**
@@ -226,6 +244,7 @@ class Installer extends LibraryInstaller
         $namespace = $Component->namespace;
         $plugin_public_src_dir = $Component->public_src_dir;
         $webpack_components_config_js_file =  $composer_json_dir.'/app/public_src/components_config/webpack.components.config.js';
+
         if (file_exists($webpack_components_config_js_file)) {
             $webpack_content = file_get_contents($webpack_components_config_js_file);
         } else {
@@ -246,6 +265,7 @@ WEBPACK;
         $aliases = $matches[1];
         //GuzabaPlatform\Tags
         $namespace = str_replace('\\','.', $namespace);
+
         $aliases .= "\"@$namespace\": path.resolve(__dirname, '$plugin_public_src_dir'),".PHP_EOL;
         $aliases_replacement_section = 'exports.aliases = {'.$aliases.'}';
         $webpack_content = preg_replace('/exports.aliases = {(.*)}/iUms', $aliases_replacement_section, $webpack_content);
@@ -269,7 +289,7 @@ WEBPACK;
         }
     }
 
-    private function update_manifest_on_uninstall(string $composer_json_dir, $Component) : void
+    private function update_manifest_on_uninstall(string $composer_json_dir, \stdClass $Component) : void
     {
         $component_name = $Component->name;
         $manifest_json_file = $composer_json_dir.'/manifest.json';
@@ -280,13 +300,15 @@ WEBPACK;
         }
 
         $component_removed = false;
-        foreach ($manifest_content->components as $key => $ManifestComponent) {
-            if ($ManifestComponent->name == $component_name) {
-                unset($manifest_content->components[$key]);
+        $components_copy = $manifest_content->components;
+        foreach ($components_copy as $key => $ManifestComponent) {
+            if ($ManifestComponent->name === $component_name) {
+                unset($components_copy[$key]);
                 $component_removed = true;
                 break;
             }
         }
+        $manifest_content->components = array_values($components_copy);//ensure this remains an indexed array
 
         if (!$component_removed) {
             throw new \Exception(sprintf('Component "%s" isn\'t present in manifest json', $component_name));
@@ -440,13 +462,13 @@ WEBPACK;
         //no - multiple namespaces will be supported
 
         $namespace = self::array_key_first($autoload['psr-4']);
-        $plugin_src_dir = realpath($plugin_dir.'/'.$autoload['psr-4'][$namespace]);
+        $plugin_src_dir = $plugin_dir.'/'.$autoload['psr-4'][$namespace];
         if ($namespace[strlen($namespace)-1] === '\\') {
             $namespace = substr($namespace, 0, -1);
         }
-        $plugin_public_src_dir = realpath( str_replace( str_replace('\\','/', $namespace), '', $plugin_src_dir).'/../public_src');
 
-        //print $plugin_src_dir;
+        //$plugin_public_src_dir = realpath( str_replace( str_replace('\\','/', $namespace), '', $plugin_src_dir).'/../public_src');
+        $plugin_public_src_dir = realpath($plugin_src_dir.'/../public_src');
         //TODO add suppport for multiple namespaces;
 
         $Component = new \stdClass();
