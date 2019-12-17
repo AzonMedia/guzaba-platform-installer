@@ -156,7 +156,9 @@ class Installer extends LibraryInstaller
         if (!file_exists($composer_json_dir.'/app/registry')) {
             `cp -r $guzaba_platform_dir/app/registry $composer_json_dir/app/registry`;
         }
-        `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
+        if (!file_exists($composer_json_dir.'/app/startup_generated')) {
+            `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
+        }
         if (!file_exists($composer_json_dir.'/app/public_src')) {
             `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
             //`mkdir $composer_json_dir/app/public_src`;
@@ -467,8 +469,8 @@ WEBPACK;
             $namespace = substr($namespace, 0, -1);
         }
 
-        //$plugin_public_src_dir = realpath( str_replace( str_replace('\\','/', $namespace), '', $plugin_src_dir).'/../public_src');
-        $plugin_public_src_dir = realpath($plugin_src_dir.'/../public_src');
+        $plugin_public_src_dir = realpath( str_replace( str_replace('\\','/', $namespace), '', $plugin_src_dir).'/../public_src');
+        //$plugin_public_src_dir = realpath($plugin_src_dir.'/../public_src');//this is incorrect as some plugins may have deeper path containing the namespace
         //TODO add suppport for multiple namespaces;
 
         $Component = new \stdClass();
