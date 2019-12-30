@@ -160,8 +160,8 @@ class Installer extends LibraryInstaller
             `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
         }
         if (!file_exists($composer_json_dir.'/app/public_src')) {
-            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
-            //`mkdir $composer_json_dir/app/public_src`;
+            //`cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
+            `mkdir $composer_json_dir/app/public_src`;
         }
         if (!file_exists($composer_json_dir.'/app/public_src/components_config')) {
             `mkdir $composer_json_dir/app/public_src/components_config`;
@@ -268,7 +268,7 @@ WEBPACK;
         //GuzabaPlatform\Tags
         $namespace = str_replace('\\','.', $namespace);
 
-        $aliases .= "\"@$namespace\": path.resolve(__dirname, '$plugin_public_src_dir'),".PHP_EOL;
+        $aliases .= "\"@$namespace\": path.resolve(__dirname, '$plugin_public_src_dir/src'),".PHP_EOL;
         $aliases_replacement_section = 'exports.aliases = {'.$aliases.'}';
         $webpack_content = preg_replace('/exports.aliases = {(.*)}/iUms', $aliases_replacement_section, $webpack_content);
 
