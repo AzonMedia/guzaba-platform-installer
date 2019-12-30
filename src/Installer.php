@@ -160,8 +160,13 @@ class Installer extends LibraryInstaller
             `cp -r $guzaba_platform_dir/app/startup_generated $composer_json_dir/app/startup_generated`;
         }
         if (!file_exists($composer_json_dir.'/app/public_src')) {
-            //`cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
-            `mkdir $composer_json_dir/app/public_src`;
+            `cp -r $guzaba_platform_dir/app/public_src $composer_json_dir/app/public_src`;
+            //`mkdir $composer_json_dir/app/public_src`;
+            //TODO improve - copy only the needed files instead of removing the unneded ones
+            `rm -rf $composer_json_dir.'/app/public_src/assets`;
+            `rm -rf $composer_json_dir.'/app/public_src/components`;
+            //`rm -rf $composer_json_dir.'/app/public_src/docs`;//leave the docs...
+            `rm -rf $composer_json_dir.'/app/public_src/views`;
         }
         if (!file_exists($composer_json_dir.'/app/public_src/components_config')) {
             `mkdir $composer_json_dir/app/public_src/components_config`;
