@@ -246,12 +246,18 @@ class Installer extends LibraryInstaller
 
     }
 
+    /**
+     * @param string $composer_json_dir Contains the path to the composer.json file - this is the root directory of the project.
+     * @param \stdClass $Component
+     */
     private function update_webpack_config_on_install(string $composer_json_dir, \stdClass $Component) : void
     {
+
         $namespace = $Component->namespace;
         $plugin_public_src_dir = $Component->public_src_dir;
         $webpack_components_config_js_file =  $composer_json_dir.'/app/public_src/components_config/webpack.components.config.js';
 
+        $vendor_dir = $composer_json_dir.'/vendor';
         if (file_exists($webpack_components_config_js_file)) {
             $webpack_content = file_get_contents($webpack_components_config_js_file);
         } else {
@@ -261,10 +267,14 @@ const path = require('path')
 exports.aliases = {
     vue$: 'vue/dist/vue.esm.js',
     "@": path.resolve(__dirname, '../src'),
+    "@VENDOR": '{$vendor_dir}',
 }
 WEBPACK;
 
         }
+
+
+
         preg_match('/exports.aliases = {(.*)}/iUms', $webpack_content, $matches);
         if (!isset($matches[1])) {
             throw new \RuntimeException(sprintf('The file %s does not contain an "expprt.aliases = {}" section.', $webpack_components_config_js_file));
