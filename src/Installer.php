@@ -193,23 +193,8 @@ class Installer extends LibraryInstaller
             $manifest_content->components = [];
             file_put_contents($manifest_json_file, json_encode($manifest_content, self::JSON_ENCODE_FLAGS ));
         }
+
         $this->install_guzaba_platform_component($Repo, $Package);
-
-        $database_file = $guzaba_platform_dir . '/app/database/guzaba2.sql';
-        $import_script = $guzaba_platform_dir . '/app/database/import_database.sh';
-        $env_file = $guzaba_platform_dir . '/app/dockerfiles/GuzabaPlatform/guzaba-platform.env';
-
-        if (file_exists($database_file) && is_readable($database_file) && file_exists($import_script) && is_executable($import_script)) {
-            if (\version_compare(\PHP_VERSION, '7.4.0', '>=')) {
-                $process = new Process([ $import_script, $database_file, $env_file ]);
-            } else {
-                $process = new Process($import_script . ' ' . $database_file . ' ' . $env_file);
-            }
-
-            $process->run(function ($type, $buffer) {
-                echo $buffer;
-            });
-        }
     }
 
     private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
