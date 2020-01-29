@@ -200,9 +200,12 @@ class Installer extends LibraryInstaller
     private function install_guzaba_platform_component(InstalledRepositoryInterface $Repo, PackageInterface $Package) : void
     {
         $Component = $this->createComponentByPackage($Package);
+        print 'component' . PHP_EOL;
         $composer_json_dir = $this->getComposerJsonDir();
         $this->update_manifest_on_install($composer_json_dir, $Component);
+        print 'manifest' . PHP_EOL;
         $this->update_webpack_config_on_install($composer_json_dir, $Component);
+        print 'webpack' . PHP_EOL;
         $this->execute_post_install_hook($Component, $Repo,$Package);
     }
 
