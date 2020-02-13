@@ -130,6 +130,13 @@ class Installer extends LibraryInstaller
             `mkdir $composer_json_dir/app`;
         }
 
+        if (!file_exists($composer_json_dir.'/app/src')) {
+            `mkdir $composer_json_dir/app/src`;
+        }
+
+        if (!file_exists($composer_json_dir.'/app/src/translations')) {
+            `mkdir $composer_json_dir/app/src/translations`;
+        }
 
         if (!file_exists($composer_json_dir.'/app/bin')) {
             //`cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
