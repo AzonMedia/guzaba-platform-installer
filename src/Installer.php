@@ -143,7 +143,9 @@ class Installer extends LibraryInstaller
 
         if (!file_exists($composer_json_dir.'/app/bin')) {
             //`cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
-            `ln -s $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;//instead of copying make a symlink
+            //`ln -s $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;//instead of copying make a symlink
+            //symlink does not work when the application is started in the containers with ./start_server_in_container
+            `cp -r $guzaba_platform_dir/app/bin $composer_json_dir/app/bin`;
         }
         if (!file_exists($composer_json_dir.'/app/certificates')) {
             `cp -r $guzaba_platform_dir/app/certificates $composer_json_dir/app/certificates`;//this is a copy as there will be more files added
@@ -151,7 +153,9 @@ class Installer extends LibraryInstaller
         }
         if (!file_exists($composer_json_dir.'/app/dockerfiles')) {
             //`cp -r $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
-            `ln -s $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+            //`ln -s $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
+            //lets not have any symlinks...
+            `cp -r $guzaba_platform_dir/app/dockerfiles $composer_json_dir/app/dockerfiles`;
         }
         if (!file_exists($composer_json_dir.'/app/logs')) {
             `cp -r $guzaba_platform_dir/app/logs $composer_json_dir/app/logs`;
