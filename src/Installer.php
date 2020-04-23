@@ -57,6 +57,7 @@ class Installer extends LibraryInstaller
      * @param InstalledRepositoryInterface $Repo
      * @param PackageInterface $Package
      * @throws \Exception
+     * @throws \Throwable
      */
     public function uninstall(InstalledRepositoryInterface $Repo, PackageInterface $Package)
     {
@@ -81,6 +82,7 @@ class Installer extends LibraryInstaller
      * @param PackageInterface $InitialPackage
      * @param PackageInterface $TargetPackage
      * @throws \Exception
+     * @throws \Throwable
      */
     public function update(InstalledRepositoryInterface $Repo, PackageInterface $InitialPackage, PackageInterface $TargetPackage)
     {
