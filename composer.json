@@ -4,7 +4,7 @@
     "description": "GuzabaPlatform installer",
     "keywords": ["installer"],
     "homepage": "https://github.com/AzonMedia/guzaba-platform-installer",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Vesko Kenashkov",
